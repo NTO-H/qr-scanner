@@ -7,41 +7,33 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'qr-reader';
-  public cameras:MediaDeviceInfo[]=[];
+  public cameras: MediaDeviceInfo[] = [];
   public myDevice!: MediaDeviceInfo;
-  public scannerEnabled=false;
-  public results:string[]=[];
+  public scannerEnabled = false;
+  public results: string[] = [];
 
-  constructor() {
-   /*  navigator.mediaDevices.enumerateDevices().then((devices) => {
-      for (var i = 0; i < devices.length; i++) {
-        var device = devices[i];
-        if (device.kind === 'videoinput') {
-          console.log(device);
-          this.myDevice = devices[1];          
-        }
-      }
-      console.log(this.myDevice);
-    }); */
+  constructor() { }
+
+  camerasFoundHandler(cameras: MediaDeviceInfo[]) {
+    this.cameras = cameras;
+    if (cameras.length > 0) {
+      this.selectCamera(this.cameras[0].deviceId);
+    }
   }
 
-  camerasFoundHandler(cameras: MediaDeviceInfo[]){
-    this.cameras=cameras;
-    this.selectCamera(this.cameras[0].label);
-  }
-
-  scanSuccessHandler(event:string){
+  scanSuccessHandler(event: string) {
     console.log(event);
     this.results.unshift(event);
   }
 
-  selectCamera(cameraLabel: string){    
-    this.cameras.forEach(camera=>{
-      if(camera.label.includes(cameraLabel)){
-        this.myDevice=camera;
-        console.log(camera.label);
-        this.scannerEnabled=true;
-      }
-    })    
+  selectCamera(deviceId: string) {
+    const selectedCamera = this.cameras.find(camera => camera.deviceId === deviceId);
+    if (selectedCamera) {
+      this.myDevice = selectedCamera;
+      console.log('Using camera: ', this.myDevice.label);
+      this.scannerEnabled = true;
+    } else {
+      console.error('Camera not found!');
+    }
   }
 }
